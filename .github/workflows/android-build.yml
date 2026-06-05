@@ -1,0 +1,59 @@
+name: Build Android APK in GitHub
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Debug APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Show project structure
+        run: |
+          echo "Project root:"
+          ls -la
+          echo "App folder:"
+          ls -la app || true
+
+      - name: Check required files
+        run: |
+          test -f gradlew || (echo "ERROR: gradlew not found in root" && exit 1)
+          test -f settings.gradle.kts || (echo "ERROR: settings.gradle.kts not found in root" && exit 1)
+          test -f build.gradle.kts || (echo "ERROR: build.gradle.kts not found in root" && exit 1)
+          test -d app || (echo "ERROR: app folder not found" && exit 1)
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Make Gradle executable
+        run: chmod +x ./gradlew
+
+      - name: Build debug APK
+        run: ./gradlew assembleDebug --stacktrace
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DyadyaVitya-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+
+      - name: Upload build reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-reports
+          path: |
+            app/build/reports/
+            build/reports/
