@@ -1,0 +1,7 @@
+<resources>
+    <style name="Theme.DyadyaVitya" parent="android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">#0B1F2A</item>
+        <item name="android:fontFamily">sans</item>
+    </style>
+</resources>
